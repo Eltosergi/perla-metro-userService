@@ -231,3 +231,6 @@ C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\refint\perla-metro-user
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\perla-metro-user.pdb
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\perla-metro-user.genruntimeconfig.cache
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\ref\perla-metro-user.dll
+C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\perla-metro-user.sourcelink.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\Npgsql.dll
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

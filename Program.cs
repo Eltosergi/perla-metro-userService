@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddDbContext<ApplicationDBContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
