@@ -65,6 +65,11 @@ namespace perla_metro_user.src.Repository
             {
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.PasswordMismatch, 400);
             }
+            if (!Regex.IsMatch(registerUserDTO.Password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"))
+            {
+                return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.WeakPassword, 400);
+            }
+                      
 
             // Validar dominio del correo
             if (!Regex.IsMatch(registerUserDTO.Email, @"^[^@\s]+@perlametro\.cl$", RegexOptions.IgnoreCase))
