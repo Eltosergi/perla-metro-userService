@@ -8,7 +8,7 @@ using perla_metro_user.src.Models;
 
 namespace perla_metro_user.src.Data
 {
-    public class ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : IdentityDbContext<User, Role, int>(options)
+    public class ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : IdentityDbContext<User, Role, Guid>(options)
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -18,13 +18,13 @@ namespace perla_metro_user.src.Data
             {
                 new Role
                 {
-                    Id = 1,
+                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Name = "Admin",
                     NormalizedName = "ADMIN"
                 },
                 new Role
                 {
-                    Id = 2,
+                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     Name = "User",
                     NormalizedName = "USER"
                 }
