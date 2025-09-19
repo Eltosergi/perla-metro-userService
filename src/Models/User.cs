@@ -15,9 +15,5 @@ namespace perla_metro_user.src.Models
         [Required]
         public required string LastName { get; set; }
         
-        public User()
-        {
-            Id = Guid.NewGuid();
-        }
     }
 }

@@ -9,9 +9,10 @@ namespace perla_metro_user.src.Mappers
 {
     public class UserMapper
     {
-        public static User newUserMapper(RegisterUserDTO registerUserDTO) =>
+        public static User newUserMapper(RegisterUserDTO registerUserDTO, Guid id) =>
             new User
             {
+                Id = id,
                 Name = registerUserDTO.Name,
                 LastName = registerUserDTO.LastName,
                 Email = registerUserDTO.Email,

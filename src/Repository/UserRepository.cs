@@ -79,7 +79,7 @@ namespace perla_metro_user.src.Repository
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.EmailInUse, 409);
             }
 
-            var user = UserMapper.newUserMapper(registerUserDTO);
+            var user = UserMapper.newUserMapper(registerUserDTO, await GuidHelper.GenerateUniqueUserIdAsync(_context));
             var result = await _userManager.CreateAsync(user, registerUserDTO.Password);
 
             if (!result.Succeeded)

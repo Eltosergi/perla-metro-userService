@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("perla-metro-user")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85e21d56946513534e1063430f71a193b68a4e68")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ab74bd9bb9106573f78f5cca33141864bf8722a")]
 [assembly: System.Reflection.AssemblyProductAttribute("perla-metro-user")]
 [assembly: System.Reflection.AssemblyTitleAttribute("perla-metro-user")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
