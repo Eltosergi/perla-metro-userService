@@ -12,8 +12,8 @@ using perla_metro_user.src.Data;
 namespace perla_metro_user.src.Data.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250919042851_fix")]
-    partial class fix
+    [Migration("20250920015847_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -187,6 +187,9 @@ namespace perla_metro_user.src.Data.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
                     b.Property<string>("LastName")

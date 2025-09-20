@@ -14,6 +14,8 @@ namespace perla_metro_user.src.Models
         public required string Name { get; set; }
         [Required]
         public required string LastName { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
         
     }
 }

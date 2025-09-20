@@ -26,18 +26,62 @@ namespace perla_metro_user.src.Repository
             _userManager = userManager;
         }
 
+        public async Task<ResultHelper<UserDTO>> GetUserById(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return ResultHelper<UserDTO>.Fail(MessagesHelper.UserNotFound, 404);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleName = roles.FirstOrDefault() ?? "User";
+
+            var token = _tokenService.GenerateToken(user, roleName);
+
+            return ResultHelper<UserDTO>.Success(
+                UserMapper.userToUserDTOMapper(user, roleName),
+                "Usuario obtenido exitosamente"
+            );
+        }
+        public async Task<ResultHelper<IEnumerable<UserDTO>>> GetAllUsers()
+        {
+            var users = await _userManager.GetUsersInRoleAsync("User");
+
+            if (users == null || !users.Any())
+            {
+                return ResultHelper<IEnumerable<UserDTO>>.Fail(MessagesHelper.NoUsersFound, 404);
+            }
+
+            var userDTOs = new List<UserDTO>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var roleName = roles.FirstOrDefault() ?? "User";
+                userDTOs.Add(UserMapper.userToUserDTOMapper(user, roleName));
+            }
+
+            return ResultHelper<IEnumerable<UserDTO>>.Success(userDTOs, MessagesHelper.UsersFetched);
+        }
+
         public async Task<ResultHelper<AuthenticatedUserDTO>> Login(LoginUserDTO loginUserDTO)
         {
             var user = await _userManager.FindByEmailAsync(loginUserDTO.Email);
+
             if (user == null)
             {
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.InvalidCredentials, 401);
             }
-
             var passwordValid = await _userManager.CheckPasswordAsync(user, loginUserDTO.Password);
             if (!passwordValid)
             {
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.InvalidCredentials, 401);
+            }
+
+            if (!user.IsActive)
+            {
+                return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.UserDeactivated, 403);
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -69,15 +113,12 @@ namespace perla_metro_user.src.Repository
             {
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.WeakPassword, 400);
             }
-                      
 
-            // Validar dominio del correo
             if (!Regex.IsMatch(registerUserDTO.Email, @"^[^@\s]+@perlametro\.cl$", RegexOptions.IgnoreCase))
             {
                 return ResultHelper<AuthenticatedUserDTO>.Fail(MessagesHelper.InvalidDomain, 400);
             }
 
-            // Verificar si ya existe
             var existingUser = await _userManager.FindByEmailAsync(registerUserDTO.Email);
             if (existingUser != null)
             {
@@ -104,7 +145,101 @@ namespace perla_metro_user.src.Repository
             return BuildAuthenticatedUserResult(user, roleName, token, MessagesHelper.RegisterSuccess);
         }
 
-        
+        public async Task<ResultHelper<UserDTO>> DeleteUser(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return ResultHelper<UserDTO>.Fail(MessagesHelper.UserNotFound, 404);
+            }
+
+            user.IsActive = false;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return ResultHelper<UserDTO>.Fail($"{MessagesHelper.UserCreationError}: {errors}", 400);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleName = roles.FirstOrDefault() ?? "User";
+            return ResultHelper<UserDTO>.Success(UserMapper.userToUserDTOMapper(user, roleName), MessagesHelper.UserDeleted);
+        }
+
+        public async Task<ResultHelper<UserDTO>> UpdateUser(Guid userId, UpdateUserDTO updateUserDTO)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return ResultHelper<UserDTO>.Fail(MessagesHelper.UserNotFound, 404);
+
+
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.Email) && 
+                !updateUserDTO.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!Regex.IsMatch(updateUserDTO.Email, @"^[^@\s]+@perlametro\.cl$", RegexOptions.IgnoreCase))
+                    return ResultHelper<UserDTO>.Fail(MessagesHelper.InvalidDomain, 400);
+
+                var existingUser = await _userManager.FindByEmailAsync(updateUserDTO.Email);
+                if (existingUser != null && existingUser.Id != user.Id)
+                    return ResultHelper<UserDTO>.Fail(MessagesHelper.EmailInUse, 409);
+
+                user.Email = updateUserDTO.Email;
+                user.UserName = updateUserDTO.Email;
+            }
+
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.Password) || 
+                !string.IsNullOrWhiteSpace(updateUserDTO.ConfirmPassword))
+            {
+                if (updateUserDTO.Password != updateUserDTO.ConfirmPassword)
+                    return ResultHelper<UserDTO>.Fail(MessagesHelper.PasswordMismatch, 400);
+
+                // Usa el PasswordValidator de Identity para coherencia con la configuración global
+                var passwordValidation = await _userManager.PasswordValidators.First()
+                    .ValidateAsync(_userManager, user, updateUserDTO.Password);
+                if (!passwordValidation.Succeeded)
+                {
+                    var errors = string.Join(", ", passwordValidation.Errors.Select(e => e.Description));
+                    return ResultHelper<UserDTO>.Fail($"{MessagesHelper.WeakPassword}: {errors}", 400);
+                }
+
+                var removePassword = await _userManager.RemovePasswordAsync(user);
+                if (!removePassword.Succeeded)
+                    return ResultHelper<UserDTO>.Fail(MessagesHelper.UserUpdateError, 400);
+
+                var addPassword = await _userManager.AddPasswordAsync(user, updateUserDTO.Password);
+                if (!addPassword.Succeeded)
+                {
+                    var errors = string.Join(", ", addPassword.Errors.Select(e => e.Description));
+                    return ResultHelper<UserDTO>.Fail($"{MessagesHelper.UserUpdateError}: {errors}", 400);
+                }
+            }
+
+            if(!string.IsNullOrWhiteSpace(updateUserDTO.Name))
+            {
+                user.Name = updateUserDTO.Name;
+            }
+            if(!string.IsNullOrWhiteSpace(updateUserDTO.LastName))
+            {
+                user.LastName = updateUserDTO.LastName;
+            }
+    
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return ResultHelper<UserDTO>.Fail($"{MessagesHelper.UserUpdateError}: {errors}", 400);
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleName = roles.FirstOrDefault() ?? "User";
+
+            return ResultHelper<UserDTO>.Success(
+                UserMapper.userToUserDTOMapper(user, roleName),
+                MessagesHelper.UserUpdated);
+        }
+
+
         private ResultHelper<AuthenticatedUserDTO> BuildAuthenticatedUserResult(User user, string roleName, string token, string message)
         {
             return ResultHelper<AuthenticatedUserDTO>.Success(
@@ -112,6 +247,9 @@ namespace perla_metro_user.src.Repository
                 message
             );
         }
+
+        
+        
     }
 
 }

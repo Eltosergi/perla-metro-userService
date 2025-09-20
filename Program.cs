@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using perla_metro_user.src.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 options.UseNpgsql(connectionString));
 
+builder.Services.AddTransient<UserSeeder>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -65,6 +68,18 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<ApplicationDBContext>();
+    await dbContext.Database.MigrateAsync();
+
+    var seeder = services.GetRequiredService<UserSeeder>();
+    await seeder.SeedAsync();
+}
+
 
 app.UseHttpsRedirection();
 

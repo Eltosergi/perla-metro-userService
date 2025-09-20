@@ -11,5 +11,9 @@ namespace perla_metro_user.src.Interface
     {
         Task<ResultHelper<AuthenticatedUserDTO>> Register(RegisterUserDTO registerUserDTO);
         Task<ResultHelper<AuthenticatedUserDTO>> Login(LoginUserDTO loginUserDTO);
+        Task<ResultHelper<IEnumerable<UserDTO>>> GetAllUsers();
+        Task<ResultHelper<UserDTO>> GetUserById(Guid userId);
+        Task<ResultHelper<UserDTO>> DeleteUser(Guid userId);
+        Task<ResultHelper<UserDTO>> UpdateUser(Guid userId, UpdateUserDTO updateUserDTO);
     }
 }

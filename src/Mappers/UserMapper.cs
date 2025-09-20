@@ -22,11 +22,22 @@ namespace perla_metro_user.src.Mappers
         public static AuthenticatedUserDTO authenticatedUserMapper(User user, string role, string token) =>
             new AuthenticatedUserDTO
             {
+                user = userToUserDTOMapper(user, role),
+                Token = token
+            };
+
+        public static UserDTO userToUserDTOMapper(User user, string role) =>
+            new UserDTO
+            {
+                Id = user.Id,
                 Name = user.Name,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = role,
-                Token = token
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt,
+                Role = role
             };
+        
+        
     }
 }

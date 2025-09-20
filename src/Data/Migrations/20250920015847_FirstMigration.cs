@@ -35,6 +35,7 @@ namespace perla_metro_user.src.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -166,8 +167,8 @@ namespace perla_metro_user.src.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("138ee451-e540-4856-b85c-7a29ad3c0885"), null, "Admin", "ADMIN" },
-                    { new Guid("d8c196f5-93b6-4f9a-9852-f0e9c82c2242"), null, "User", "USER" }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), null, "Admin", "ADMIN" },
+                    { new Guid("22222222-2222-2222-2222-222222222222"), null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
