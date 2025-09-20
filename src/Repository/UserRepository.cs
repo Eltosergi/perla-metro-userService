@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using perla_metro_user.src.Data;
 using perla_metro_user.src.DTOs;
 using perla_metro_user.src.Helpers;
+using perla_metro_user.src.Helpers.Request;
 using perla_metro_user.src.Interface;
 using perla_metro_user.src.Mappers;
 using perla_metro_user.src.Models;
@@ -44,26 +46,41 @@ namespace perla_metro_user.src.Repository
                 "Usuario obtenido exitosamente"
             );
         }
-        public async Task<ResultHelper<IEnumerable<UserDTO>>> GetAllUsers()
+        public async Task<ResultHelper<IEnumerable<UserDTO>>> GetAllUsers(QueryParams queryParams)
         {
-            var users = await _userManager.GetUsersInRoleAsync("User");
+            
+            var usersInRole = await _userManager.GetUsersInRoleAsync("User");
+            IEnumerable<User> filteredUsers = usersInRole;
 
-            if (users == null || !users.Any())
+           
+            if (!string.IsNullOrWhiteSpace(queryParams.Fullname))
+            {
+                var fullnameLower = queryParams.Fullname.ToLower();
+                filteredUsers = filteredUsers.Where(u => 
+                    (u.Name + " " + u.LastName).ToLower().Contains(fullnameLower));
+            }
+
+            
+            if (queryParams.IsActive.HasValue)
+            {
+                filteredUsers = filteredUsers.Where(u => u.IsActive == queryParams.IsActive.Value);
+            }
+
+            
+            var pagedList = PagedList<User>.ToPagedList(
+                filteredUsers, queryParams.PageNumber, queryParams.PageSize
+            );
+
+            if (pagedList == null || !pagedList.Any())
             {
                 return ResultHelper<IEnumerable<UserDTO>>.Fail(MessagesHelper.NoUsersFound, 404);
             }
 
-            var userDTOs = new List<UserDTO>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                var roleName = roles.FirstOrDefault() ?? "User";
-                userDTOs.Add(UserMapper.userToUserDTOMapper(user, roleName));
-            }
-
+            var userDTOs = pagedList.Select(user => UserMapper.userToUserDTOMapper(user, "User")).ToList();
+            
             return ResultHelper<IEnumerable<UserDTO>>.Success(userDTOs, MessagesHelper.UsersFetched);
         }
+
 
         public async Task<ResultHelper<AuthenticatedUserDTO>> Login(LoginUserDTO loginUserDTO)
         {
@@ -145,8 +162,12 @@ namespace perla_metro_user.src.Repository
             return BuildAuthenticatedUserResult(user, roleName, token, MessagesHelper.RegisterSuccess);
         }
 
-        public async Task<ResultHelper<UserDTO>> DeleteUser(Guid userId)
+        public async Task<ResultHelper<UserDTO>> DeleteUser(Guid userId, Guid adminId)
         {
+            if (userId == adminId)
+            {
+                return ResultHelper<UserDTO>.Fail(MessagesHelper.SelfDeletionNotAllowed, 400);
+            }
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
@@ -160,6 +181,25 @@ namespace perla_metro_user.src.Repository
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return ResultHelper<UserDTO>.Fail($"{MessagesHelper.UserCreationError}: {errors}", 400);
             }
+
+            var adminUser = await _userManager.FindByIdAsync(adminId.ToString());
+            if (adminUser == null)
+            {
+                return ResultHelper<UserDTO>.Fail(MessagesHelper.UserNotFound, 404);
+            }
+
+            var deleteRecord = new DeleteHistorial
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                User = user,
+                AdminId = adminId,
+                Admin = adminUser,
+                Date = DateTime.UtcNow
+            };
+
+            _context.DeleteHistorials.Add(deleteRecord);
+            await _context.SaveChangesAsync();
 
             var roles = await _userManager.GetRolesAsync(user);
             var roleName = roles.FirstOrDefault() ?? "User";

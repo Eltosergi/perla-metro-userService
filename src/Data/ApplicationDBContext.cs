@@ -10,9 +10,12 @@ namespace perla_metro_user.src.Data
 {
     public class ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : IdentityDbContext<User, Role, Guid>(options)
     {
+
+        public DbSet<DeleteHistorial> DeleteHistorials { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
 
             List<Role> roles = new List<Role>
             {

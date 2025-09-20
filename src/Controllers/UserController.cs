@@ -26,9 +26,9 @@ namespace perla_metro_user.src.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] QueryParams queryParams)
         {
-            var result = await _userRepository.GetAllUsers();
+            var result = await _userRepository.GetAllUsers(queryParams);
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
         [HttpGet("{userId}")]
@@ -43,7 +43,10 @@ namespace perla_metro_user.src.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            var result = await _userRepository.DeleteUser(userId);
+            var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(adminId))
+                return Unauthorized(new { Message = "Usuario no autorizado" });
+            var result = await _userRepository.DeleteUser(userId, Guid.Parse(adminId));
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
 

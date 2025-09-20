@@ -25,6 +25,7 @@ namespace perla_metro_user.src.Helpers
 
         public const string UserUpdated = "Usuario actualizado exitosamente";
         public const string UserUpdateError = "Error al actualizar el usuario";
+        public const string SelfDeletionNotAllowed = "No puedes eliminar tu propia cuenta";
 
     }
 }
