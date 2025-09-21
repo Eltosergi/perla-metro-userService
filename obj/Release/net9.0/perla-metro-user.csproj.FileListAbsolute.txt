@@ -234,3 +234,9 @@ C:\Users\Serpa\Desktop\perla-metro-user\obj\Release\net9.0\refint\perla-metro-us
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Release\net9.0\perla-metro-user.pdb
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Release\net9.0\perla-metro-user.genruntimeconfig.cache
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Release\net9.0\ref\perla-metro-user.dll
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\web.config
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\appsettings.Development.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\appsettings.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\perla-metro-user.deps.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\perla-metro-user.runtimeconfig.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Release\net9.0\published\perla-metro-user.staticwebassets.endpoints.json
