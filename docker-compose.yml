@@ -4,29 +4,6 @@ services:
     image: "eltosergi/perlapi"
     ports:
       - "3000:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=perla-metro-user-db;Username=root;Password=admin123
-    depends_on:
-      - postgres
-    networks:
-      - backend
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: perla-metro-user-db
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - backend
 
-volumes:
-  pgdata: {}
 
-networks:
-  backend:

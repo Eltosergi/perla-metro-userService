@@ -234,3 +234,15 @@ C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\ref\perla-metro-user.dl
 C:\Users\Serpa\Desktop\perla-metro-user\obj\Debug\net9.0\perla-metro-user.sourcelink.json
 C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\Npgsql.dll
 C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\web.config
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\web.config
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\appsettings.Development.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\appsettings.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\perla-metro-user.deps.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\perla-metro-user.runtimeconfig.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\perla-metro-user.staticwebassets.endpoints.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\appsettings.Development.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\appsettings.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\perla-metro-user.deps.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\perla-metro-user.runtimeconfig.json
+C:\Users\Serpa\Desktop\perla-metro-user\bin\Debug\net9.0\published\published\perla-metro-user.staticwebassets.endpoints.json
