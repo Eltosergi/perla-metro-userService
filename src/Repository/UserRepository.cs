@@ -82,6 +82,12 @@ namespace perla_metro_user.src.Repository
                 filteredUsers = filteredUsers.Where(u => u.IsActive == queryParams.IsActive.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(queryParams.Email))
+            {
+                var emailLower = queryParams.Email.ToLower();
+                filteredUsers = filteredUsers.Where(u => u.Email.ToLower().Contains(emailLower));
+            }
+
 
             var pagedList = PagedList<User>.ToPagedList(
                 filteredUsers, queryParams.PageNumber, queryParams.PageSize
