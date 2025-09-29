@@ -91,6 +91,4 @@ app.UseHttpsRedirection(); // Agrega middleware para redirigir solicitudes HTTP 
 
 app.Run(); // Ejecuta la aplicación web.
 
-
-
-// Al siguiente programa que haga lo hare en chino mandarin para que el ayudante este entretenido un rato
+// Fin del programa principal.
