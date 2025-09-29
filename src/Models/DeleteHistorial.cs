@@ -8,6 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace perla_metro_user.src.Models
 {
+    // Modelo que representa una entrada en el historial de eliminaciones de usuarios.
+    // Contiene:
+    // - Id: Identificador único de la entrada (GUID).
+    // - UserId: Identificador del usuario que fue eliminado (GUID).
+    // - User: Referencia al usuario que fue eliminado (navegación).
+    // - AdminId: Identificador del administrador que realizó la eliminación (GUID).
+    // - Admin: Referencia al administrador que realizó la eliminación (navegación).
+    // - Date: Fecha y hora en que se realizó la eliminación.
+    // Usado para registrar y auditar las eliminaciones de usuarios en el sistema.
+    
     public class DeleteHistorial
     {
         [Key]

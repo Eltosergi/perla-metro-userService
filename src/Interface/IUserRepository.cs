@@ -7,6 +7,11 @@ using perla_metro_user.src.Helpers;
 
 namespace perla_metro_user.src.Interface
 {
+    // Interfaz para el repositorio que maneja las operaciones relacionadas con los usuarios.
+    // Define métodos para registrar, autenticar, obtener, actualizar y eliminar usuarios.
+    // Usado en UserService para implementar la lógica de negocio relacionada con usuarios.
+    // Contiene métodos asincrónicos que retornan ResultHelper con los resultados de las operaciones
+    
     public interface IUserRepository
     {
         Task<ResultHelper<AuthenticatedUserDTO>> Register(RegisterUserDTO registerUserDTO);

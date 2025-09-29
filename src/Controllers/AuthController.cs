@@ -11,10 +11,12 @@ using perla_metro_user.src.Interface;
 
 namespace perla_metro_user.src.Controllers
 {
+    // Controlador para manejar la autenticación y el registro de usuarios. 
     [Route("[controller]")]
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> _logger;
+        // Inyección de la interfaz IUserRepository para manejar la lógica de autenticación y registro.
         private readonly IUserRepository _userRepository;
 
         public AuthController(ILogger<AuthController> logger, IUserRepository userRepository)
@@ -22,7 +24,7 @@ namespace perla_metro_user.src.Controllers
             _logger = logger;
             _userRepository = userRepository;
         }
-
+        // Este endpoint maneja el login de usuarios y retorna un token JWT si las credenciales son correctas.
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO loginUserDTO)
         {
@@ -30,7 +32,7 @@ namespace perla_metro_user.src.Controllers
 
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
-
+        // Este endpoint maneja el registro de nuevos usuarios. retorna un token JWT si el registro es exitoso.
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO registerUserDTO)
         {

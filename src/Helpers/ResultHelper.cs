@@ -7,6 +7,13 @@ using perla_metro_user.src.DTOs;
 
 namespace perla_metro_user.src.Helpers
 {
+    // Clase genérica para manejar resultados de operaciones con éxito o fallo.
+    // Contiene:
+    // - IsSuccess: Indica si la operación fue exitosa.
+    // - StatusCode: Código de estado HTTP asociado al resultado.
+    // - Message: Mensaje descriptivo del resultado.
+    // - Data: Datos resultantes de la operación (de tipo genérico T).
+    // Usado en servicios y controladores para estandarizar respuestas.
     public class ResultHelper<T>
     {
         public bool IsSuccess { get; set; }

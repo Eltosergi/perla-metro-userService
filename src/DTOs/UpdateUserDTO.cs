@@ -5,6 +5,16 @@ using System.Threading.Tasks;
 
 namespace perla_metro_user.src.DTOs
 {
+    // DTO para manejar los datos necesarios para actualizar la información de un usuario.
+    // Todos los campos son opcionales para permitir actualizaciones parciales.
+    // Contiene:
+    // - Name: Nombre del usuario.
+    // - LastName: Apellido del usuario.
+    // - Email: Correo electrónico del usuario.
+    // - Password: Contraseña del usuario.
+    // - ConfirmPassword: Confirmación de la contraseña.
+    // Usado en el endpoint de actualización de usuario.
+    
     public class UpdateUserDTO
     {
         public string Name { get; set; } = string.Empty;

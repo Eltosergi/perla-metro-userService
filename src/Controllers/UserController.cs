@@ -12,10 +12,12 @@ using perla_metro_user.src.Interface;
 
 namespace perla_metro_user.src.Controllers
 {
+    // Controlador para manejar operaciones relacionadas con usuarios. Accesible solo para administradores excepto la actualización de usuario. 
     [Route("[controller]")]
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
+        // Inyección de la interfaz IUserRepository para manejar la lógica de usuarios.
         private readonly IUserRepository _userRepository;
 
         public UserController(ILogger<UserController> logger, IUserRepository userRepository)
@@ -24,6 +26,7 @@ namespace perla_metro_user.src.Controllers
             _userRepository = userRepository;
         }
 
+        // Este endpoint obtiene todos los usuarios, accesible solo para administradores. Soporta paginación y filtrado. 
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers([FromQuery] QueryParams queryParams)
@@ -31,6 +34,7 @@ namespace perla_metro_user.src.Controllers
             var result = await _userRepository.GetAllUsers(queryParams);
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
+        // Este endpoint obtiene un usuario por su ID, accesible solo para administradores. 
         [HttpGet("{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(Guid userId)
@@ -38,7 +42,7 @@ namespace perla_metro_user.src.Controllers
             var result = await _userRepository.GetUserById(userId);
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
-
+        // Este endpoint elimina un usuario por su ID, accesible solo para administradores. Registra la acción en el historial de eliminaciones. Hace un soft delete cambiando el estado del usuario a inactivo.
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid userId)
@@ -49,7 +53,7 @@ namespace perla_metro_user.src.Controllers
             var result = await _userRepository.DeleteUser(userId, Guid.Parse(adminId));
             return result.IsSuccess ? Ok(result) : StatusCode(result.StatusCode, result);
         }
-
+        // Este endpoint permite a un usuario autenticado actualizar su propia información. Pide el ID del usuario desde el token JWT.
         [HttpPut("Update")]
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO dto)

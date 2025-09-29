@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace perla_metro_user.src.Helpers
 {
+
+    // Clase estática que contiene mensajes constantes usados en la aplicación.
+    // Estos mensajes son utilizados para proporcionar retroalimentación al usuario
+
     public static class MessagesHelper
     {
         public const string InvalidCredentials = "Correo o contraseña inválidos";

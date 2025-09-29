@@ -7,6 +7,11 @@ using perla_metro_user.src.Models;
 
 namespace perla_metro_user.src.Mappers
 {
+
+    // Clase estática que contiene métodos para mapear entre diferentes modelos y DTOs relacionados con usuarios.
+    // Incluye métodos para mapear desde RegisterUserDTO a User, desde User a AuthenticatedUserDTO, y desde User a UserDTO.
+    // Usado en UserService para transformar datos entre capas de la aplicación.
+    
     public class UserMapper
     {
         public static User newUserMapper(RegisterUserDTO registerUserDTO, Guid id) =>
@@ -37,7 +42,7 @@ namespace perla_metro_user.src.Mappers
                 CreatedAt = user.CreatedAt,
                 Role = role
             };
-        
-        
+
+
     }
 }

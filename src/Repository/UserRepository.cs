@@ -15,11 +15,22 @@ using perla_metro_user.src.Models;
 
 namespace perla_metro_user.src.Repository
 {
+    // Repositorio que maneja las operaciones relacionadas con los usuarios.
+    // Implementa IUserRepository y define métodos para registrar, autenticar, obtener, actualizar y
+    // eliminar usuarios. Utiliza ApplicationDBContext para interactuar con la base de datos,
+    // UserManager para manejar operaciones relacionadas con usuarios, y ITokenService para generar tokens JWT
+    // Usado en UserService para implementar la lógica de negocio relacionada con usuarios.
+    // Contiene métodos asincrónicos que retornan ResultHelper con los resultados de las operaciones
+
     public class UserRepository : IUserRepository
     {
+        // Inyección de dependencias para ApplicationDBContext, ITokenService y UserManager.
         private readonly ApplicationDBContext _context;
         private readonly ITokenService _tokenService;
         private readonly UserManager<User> _userManager;
+
+        // Constructor que recibe ApplicationDBContext, ITokenService y UserManager a través de inyección de dependencias.
+        // Asigna los parámetros a las variables privadas.
 
         public UserRepository(ApplicationDBContext context, ITokenService tokenService, UserManager<User> userManager)
         {
@@ -27,6 +38,9 @@ namespace perla_metro_user.src.Repository
             _tokenService = tokenService;
             _userManager = userManager;
         }
+
+        // Método asincrónico para obtener un usuario por su ID.
+        // Usa UserManager para buscar el usuario y obtener su rol.
 
         public async Task<ResultHelper<UserDTO>> GetUserById(Guid userId)
         {
@@ -46,27 +60,29 @@ namespace perla_metro_user.src.Repository
                 "Usuario obtenido exitosamente"
             );
         }
+        // Método asincrónico para obtener todos los usuarios con rol "User".
+        // Soporta paginación y filtrado por nombre completo y estado activo/inactivo.
         public async Task<ResultHelper<IEnumerable<UserDTO>>> GetAllUsers(QueryParams queryParams)
         {
-            
+
             var usersInRole = await _userManager.GetUsersInRoleAsync("User");
             IEnumerable<User> filteredUsers = usersInRole;
 
-           
+
             if (!string.IsNullOrWhiteSpace(queryParams.Fullname))
             {
                 var fullnameLower = queryParams.Fullname.ToLower();
-                filteredUsers = filteredUsers.Where(u => 
+                filteredUsers = filteredUsers.Where(u =>
                     (u.Name + " " + u.LastName).ToLower().Contains(fullnameLower));
             }
 
-            
+
             if (queryParams.IsActive.HasValue)
             {
                 filteredUsers = filteredUsers.Where(u => u.IsActive == queryParams.IsActive.Value);
             }
 
-            
+
             var pagedList = PagedList<User>.ToPagedList(
                 filteredUsers, queryParams.PageNumber, queryParams.PageSize
             );
@@ -77,10 +93,12 @@ namespace perla_metro_user.src.Repository
             }
 
             var userDTOs = pagedList.Select(user => UserMapper.userToUserDTOMapper(user, "User")).ToList();
-            
+
             return ResultHelper<IEnumerable<UserDTO>>.Success(userDTOs, MessagesHelper.UsersFetched);
         }
 
+        // Método asincrónico para autenticar a un usuario y generar un token JWT.
+        // Usa UserManager para validar las credenciales y obtener el rol del usuario.
 
         public async Task<ResultHelper<AuthenticatedUserDTO>> Login(LoginUserDTO loginUserDTO)
         {
@@ -114,6 +132,10 @@ namespace perla_metro_user.src.Repository
 
             return BuildAuthenticatedUserResult(user, roleName, token, MessagesHelper.LoginSuccess);
         }
+
+        // Método asincrónico para registrar un nuevo usuario.
+        // Valida el correo electrónico, la contraseña y verifica si el correo ya está en uso.
+        // Usa UserManager para crear el usuario y asignarle el rol "User".
 
         public async Task<ResultHelper<AuthenticatedUserDTO>> Register(RegisterUserDTO registerUserDTO)
         {
@@ -162,6 +184,10 @@ namespace perla_metro_user.src.Repository
             return BuildAuthenticatedUserResult(user, roleName, token, MessagesHelper.RegisterSuccess);
         }
 
+        // Método asincrónico para eliminar (desactivar) un usuario.
+        // Verifica que el usuario no se esté eliminando a sí mismo.
+        // Usa UserManager para actualizar el estado del usuario y registra la eliminación en DeleteHistorial.
+
         public async Task<ResultHelper<UserDTO>> DeleteUser(Guid userId, Guid adminId)
         {
             if (userId == adminId)
@@ -206,6 +232,10 @@ namespace perla_metro_user.src.Repository
             return ResultHelper<UserDTO>.Success(UserMapper.userToUserDTOMapper(user, roleName), MessagesHelper.UserDeleted);
         }
 
+        // Método asincrónico para actualizar la información de un usuario.
+        // Permite actualizar el correo electrónico, la contraseña, el nombre y el apellido.
+        // Valida el correo electrónico y la contraseña, y verifica si el correo ya está en uso.
+
         public async Task<ResultHelper<UserDTO>> UpdateUser(Guid userId, UpdateUserDTO updateUserDTO)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -213,7 +243,7 @@ namespace perla_metro_user.src.Repository
                 return ResultHelper<UserDTO>.Fail(MessagesHelper.UserNotFound, 404);
 
 
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Email) && 
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.Email) &&
                 !updateUserDTO.Email.Equals(user.Email, StringComparison.OrdinalIgnoreCase))
             {
                 if (!Regex.IsMatch(updateUserDTO.Email, @"^[^@\s]+@perlametro\.cl$", RegexOptions.IgnoreCase))
@@ -227,7 +257,7 @@ namespace perla_metro_user.src.Repository
                 user.UserName = updateUserDTO.Email;
             }
 
-            if (!string.IsNullOrWhiteSpace(updateUserDTO.Password) || 
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.Password) ||
                 !string.IsNullOrWhiteSpace(updateUserDTO.ConfirmPassword))
             {
                 if (updateUserDTO.Password != updateUserDTO.ConfirmPassword)
@@ -254,15 +284,15 @@ namespace perla_metro_user.src.Repository
                 }
             }
 
-            if(!string.IsNullOrWhiteSpace(updateUserDTO.Name))
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.Name))
             {
                 user.Name = updateUserDTO.Name;
             }
-            if(!string.IsNullOrWhiteSpace(updateUserDTO.LastName))
+            if (!string.IsNullOrWhiteSpace(updateUserDTO.LastName))
             {
                 user.LastName = updateUserDTO.LastName;
             }
-    
+
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -279,6 +309,7 @@ namespace perla_metro_user.src.Repository
                 MessagesHelper.UserUpdated);
         }
 
+        // Método privado para construir un ResultHelper con los datos del usuario autenticado.
 
         private ResultHelper<AuthenticatedUserDTO> BuildAuthenticatedUserResult(User user, string roleName, string token, string message)
         {
@@ -288,8 +319,8 @@ namespace perla_metro_user.src.Repository
             );
         }
 
-        
-        
+
+
     }
 
 }

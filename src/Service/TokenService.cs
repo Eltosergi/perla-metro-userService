@@ -9,8 +9,18 @@ using Microsoft.IdentityModel.Tokens;
 using perla_metro_user.src.Interface;
 using perla_metro_user.src.Models;
 
+// Servicio para manejar la generación de tokens JWT.
+// Implementa la interfaz ITokenService.
+
+
 namespace perla_metro_user.src.Service
 {
+    // Clase que implementa la generación de tokens JWT para autenticación.
+    // Utiliza la configuración proporcionada para crear tokens firmados con HMAC SHA-512.
+    // El token incluye reclamos como email, nombre, ID y rol del usuario.
+    // Usado en UserService para generar tokens al autenticar usuarios.
+    // Contiene un método para generar el token basado en la información del usuario y su rol
+    
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
